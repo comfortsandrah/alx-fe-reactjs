@@ -13,11 +13,7 @@ function App() {
       <Header />
       <MainContent />
       <Footer />
-      <UserProfile
-        name="Sandrah"
-        age="19"
-        bio="I love Jesus and i greatly enjoy reading"
-      />
+      <UserProfile name="Alice" age="25" bio="Loves hiking and photography" />
     </>
   );
 }
