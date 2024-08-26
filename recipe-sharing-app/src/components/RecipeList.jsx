@@ -5,10 +5,11 @@ const RecipeList = () => {
 
   return (
     <div>
-      {recipes.map((recipe) => (
-        <div key={recipe.id}>
-          <h3>{recipe.title}</h3>
-          <p>{recipe.description}</p>
+      {recipes.map(({id, title, description}) => (
+        <div key={id}>
+          <p>{id}</p>
+          <h3>{title}</h3>
+          <p>{description}</p>
         </div>
       ))}
     </div>
