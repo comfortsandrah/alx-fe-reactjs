@@ -1,21 +1,36 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
-const useRecipeStore = create((set) => ({
-  recipes: [],
-  addRecipe: (newRecipe) => set(state => ({ recipes: [...state.recipes, newRecipe] })),
-  setRecipes: (recipes) => set({ recipes }),
+const useRecipeStore = create(
+  persist(
+    (set) => ({
+      recipes: [],
 
-  deleteRecipe: (recipeId) => set((state) =>
-    state.recipes.filter(recipe => recipe.id !== recipeId)
-  ),
-  updateRecipe: (recipeId, title, description) => set((state) =>
-    state.recipes.map(recipe => {
-      if (recipe.id === recipeId) {
-        recipe.title = title;
-        recipe.description = description;
-      }
-      return recipe
-    }))
-}));
+      addRecipe: (newRecipe) => set((state) => ({
+        recipes: [...state.recipes, newRecipe],
+      })),
+
+      setRecipes: (recipes) => set({ recipes }),
+
+      deleteRecipe: (recipeId) =>
+        set((state) => ({
+          recipes: state.recipes.filter((recipe) => recipe.id !== recipeId),
+        })),
+
+      updateRecipe: (recipeId, title, description) =>
+        set((state) => ({
+          recipes: state.recipes.map((recipe) => {
+            if (recipe.id === recipeId) {
+              return { ...recipe, title, description }; // Return a new object with updated values
+            }
+            return recipe;
+          }),
+        })),
+    }),
+    {
+      name: 'recipe-storage',
+      getStorage: () => localStorage,
+    }
+  ));
 
 export default useRecipeStore;

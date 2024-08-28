@@ -5,9 +5,9 @@ const AddRecipeForm = () => {
   const addRecipe = useRecipeStore((state) => state.addRecipe);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-
   const handleSubmit = (event) => {
     event.preventDefault();
+
     addRecipe({ id: Date.now(), title, description });
     setTitle("");
     setDescription("");
@@ -26,7 +26,9 @@ const AddRecipeForm = () => {
         onChange={(e) => setDescription(e.target.value)}
         placeholder="Description"
       />
-      <button type="submit">Add Recipe</button>
+      <button type="submit" disabled={!title.trim() || !description.trim()}>
+        Add Recipe
+      </button>
     </form>
   );
 };
