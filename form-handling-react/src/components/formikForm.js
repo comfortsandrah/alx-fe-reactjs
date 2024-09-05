@@ -29,8 +29,7 @@ const FormikForm = () => {
                 <Form className="flex flex-col space-y-4">
                     <div>
                         <label htmlFor="name">Name</label>
-                        <Fie
-                        ld
+                        <Field
                             type="text"
                             id="name"
                             name="name"
@@ -81,7 +80,7 @@ const FormikForm = () => {
                         disabled={isSubmitting}
                         className="bg-green-500 text-white p-2 font-bold"
                     >
-                        {isSubmitting ? "Submitting..." : "Submit"}
+                        Register
                     </button>
                 </Form>
             )}
