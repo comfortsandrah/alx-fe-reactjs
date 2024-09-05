@@ -1,0 +1,92 @@
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
+
+// Validation schema using Yup
+const validationSchema = Yup.object({
+    name: Yup.string()
+        .required('Name is required')
+        .min(2, 'Name must be at least 2 characters'),
+    email: Yup.string()
+        .email('Invalid email address')
+        .required('Email is required'),
+    password: Yup.string()
+        .required('Password is required')
+        .min(6, 'Password must be at least 6 characters'),
+});
+
+const FormikForm = () => {
+    return (
+        <Formik
+            initialValues={{ name: '', email: '', password: '' }}
+            validationSchema={validationSchema}
+            onSubmit={(values, { resetForm }) => {
+                // Submit logic
+                console.log(values);
+                resetForm(); // Reset form after submission
+            }}
+        >
+            {({ isSubmitting }) => (
+                <Form className="flex flex-col space-y-4">
+                    <div>
+                        <label htmlFor="name">Name</label>
+                        <Fie
+                        ld
+                            type="text"
+                            id="name"
+                            name="name"
+                            placeholder="Enter your name"
+                            className="border p-2"
+                        />
+                        <ErrorMessage
+                            name="name"
+                            component="div"
+                            className="text-red-500"
+                        />
+                    </div>
+
+                    <div>
+                        <label htmlFor="email">Email</label>
+                        <Field
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="Enter your email"
+                            className="border p-2"
+                        />
+                        <ErrorMessage
+                            name="email"
+                            component="div"
+                            className="text-red-500"
+                        />
+                    </div>
+
+                    <div>
+                        <label htmlFor="password">Password</label>
+                        <Field
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="Enter your password"
+                            className="border p-2"
+                        />
+                        <ErrorMessage
+                            name="password"
+                            component="div"
+                            className="text-red-500"
+                        />
+                    </div>
+
+                    <button
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="bg-green-500 text-white p-2 font-bold"
+                    >
+                        {isSubmitting ? "Submitting..." : "Submit"}
+                    </button>
+                </Form>
+            )}
+        </Formik>
+    );
+};
+
+export default FormikForm;
