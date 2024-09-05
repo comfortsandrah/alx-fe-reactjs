@@ -4,14 +4,11 @@ import * as Yup from "yup";
 // Validation schema using Yup
 const validationSchema = Yup.object({
     name: Yup.string()
-        .required('Name is required')
-        .min(2, 'Name must be at least 2 characters'),
+        .required('Name is required'),
     email: Yup.string()
-        .email('Invalid email address')
-        .required('Email is required'),
+        .email('Invalid email address').required('Email is required'),
     password: Yup.string()
-        .required('Password is required')
-        .min(6, 'Password must be at least 6 characters'),
+        .required('Password is required'),
 });
 
 const FormikForm = () => {
@@ -38,7 +35,7 @@ const FormikForm = () => {
                         />
                         <ErrorMessage
                             name="name"
-                            component="div"
+                            component="p"
                             className="text-red-500"
                         />
                     </div>
@@ -54,7 +51,7 @@ const FormikForm = () => {
                         />
                         <ErrorMessage
                             name="email"
-                            component="div"
+                            component="p"
                             className="text-red-500"
                         />
                     </div>
@@ -70,7 +67,7 @@ const FormikForm = () => {
                         />
                         <ErrorMessage
                             name="password"
-                            component="div"
+                            component="p"
                             className="text-red-500"
                         />
                     </div>
