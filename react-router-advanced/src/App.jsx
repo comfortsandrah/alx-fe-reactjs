@@ -22,10 +22,10 @@ function App() {
               <Profile />
             </ProtectedRoute>
           }
-        >
-          <Route path="details" element={<ProfileDetails />} />
-          <Route path="settings" element={<ProfileSettings />} />
-        </Route>
+        />
+        <Route path="/blog/:id" element={<BlogPost />} />
+        <Route path="details" element={<ProfileDetails />} />
+        <Route path="settings" element={<ProfileSettings />} />
       </Routes>
     </Router>
   );
