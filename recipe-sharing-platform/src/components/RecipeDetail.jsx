@@ -21,12 +21,20 @@ const RecipeDetail = () => {
       {recipe ? ( // If the recipe is found, display its details
         <div className="shadow p-4 text-center">
           <h1 className="flex flex-wrap font-bold text-green-700">
-            Instructions:<span className="italic">{recipe.title}</span>{" "}
+            {recipe.title}
           </h1>
           <img src={recipe.image} alt={recipe.title} className="rounded-full" />
-          <p className="flex flex-wrap">
-            Ingredients:<span>{recipe.summary}</span>
+          <p className="mt-4">
+            <strong>Summary:</strong> {recipe.summary}
           </p>
+          <h2 className="font-semibold mt-4">Ingredients:</h2>
+          <ul className="list-disc list-inside">
+            {recipe.ingredients.map((ingredient, index) => (
+              <li key={index}>{ingredient}</li>
+            ))}
+          </ul>
+          <h2 className="font-semibold mt-4">Instructions:</h2>
+          <p>{recipe.instructions}</p>
         </div>
       ) : (
         <p>Loading...</p> // Show a loading message or handle the case where no recipe is found
