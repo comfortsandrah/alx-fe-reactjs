@@ -15,16 +15,16 @@ const HomePage = () => {
   }, []);
   return (
     <div className="">
-      <h1 className="md:text-2xl sm:text-xl font-bold text-green-700">
+      <h1 className="md:text-2xl sm:text-xl font-bold text-green-700 ">
         Recipe List
       </h1>
-      <ul className="">
+      <ul className="grid sm:grid-cols-1 m md:grid-cols-2 lg:grid-cols-3 gap-6">
         {recipes.map((recipe) => (
           <li
             key={recipe.id}
             className="shadow my-4 rounded-xl bg-orange-200 text-center p-4 md:p-8 hover:shadow-lg"
           >
-            <h2 className="font-semibold text-lg underline underline-offset-2 text-green-700 hover:text-green-500 select-none">
+            <h2 className="font-semibold md:text-lg underline underline-offset-2 text-green-700 hover:text-green-500 select-none">
               {recipe.title}
             </h2>
             <img
