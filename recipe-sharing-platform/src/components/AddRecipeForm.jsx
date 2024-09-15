@@ -7,7 +7,7 @@ const AddRecipeForm = () => {
     steps: "",
   });
 
-  const [formErrors, setFormErrors] = useState({
+  const [errors, setErrors] = useState({
     title: "",
     ingredients: "",
     steps: "",
@@ -23,30 +23,30 @@ const AddRecipeForm = () => {
   const validateForm = () => {
     let isValid = true;
     if (!formData.title) {
-      setFormErrors((prev) => ({ ...prev, title: "Title is required" }));
+      setErrors((prev) => ({ ...prev, title: "Title is required" }));
       isValid = false;
     } else {
-      setFormErrors((prev) => ({ ...prev, title: "" }));
+      setErrors((prev) => ({ ...prev, title: "" }));
     }
 
     if (!formData.ingredients) {
-      setFormErrors((prev) => ({
+      setErrors((prev) => ({
         ...prev,
         ingredients: "Ingredient is required",
       }));
       isValid = false;
     } else {
-      setFormErrors((prev) => ({ ...prev, ingredients: "" }));
+      setErrors((prev) => ({ ...prev, ingredients: "" }));
     }
 
     if (!formData.steps) {
-      setFormErrors((prev) => ({
+      setErrors((prev) => ({
         ...prev,
         steps: "steps is required",
       }));
       isValid = false;
     } else {
-      setFormErrors((prev) => ({ ...prev, steps: "" }));
+      setErrors((prev) => ({ ...prev, steps: "" }));
     }
     return isValid;
   };
@@ -79,7 +79,7 @@ const AddRecipeForm = () => {
           value={formData.title}
           className="border p-3"
         />
-        {formErrors.title && <p> {formErrors.title}</p>}
+        {errors.title && <p> {errors.title}</p>}
       </div>
       <div className="flex gap-4 p-4">
         <label
@@ -96,7 +96,7 @@ const AddRecipeForm = () => {
           value={formData.ingredients}
           className="border p-3"
         ></textarea>
-        {formErrors.ingredients && <p>{formErrors.ingredients}</p>}
+        {errors.ingredients && <p>{errors.ingredients}</p>}
       </div>
       <div className="flex gap-4 p-4">
         <label htmlFor="steps" className="font-semibold text-base min-w-[90px]">
@@ -110,7 +110,7 @@ const AddRecipeForm = () => {
           value={formData.steps}
           className="border p-3"
         ></textarea>
-        {formErrors.steps && <p>{formErrors.steps}</p>}
+        {errors.steps && <p>{errors.steps}</p>}
       </div>
       <button
         type="submit"
