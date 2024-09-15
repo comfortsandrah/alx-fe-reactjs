@@ -4,17 +4,19 @@ const AddRecipeForm = () => {
   const [formData, setFormData] = useState({
     title: "",
     ingredients: "",
-    preparation: "",
+    steps: "",
   });
 
   const [formErrors, setFormErrors] = useState({
     title: "",
     ingredients: "",
-    preparation: "",
+    steps: "",
   });
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { target } = e;
+    const name = target.name;
+    const value = target.value;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -37,14 +39,14 @@ const AddRecipeForm = () => {
       setFormErrors((prev) => ({ ...prev, ingredients: "" }));
     }
 
-    if (!formData.preparation) {
+    if (!formData.steps) {
       setFormErrors((prev) => ({
         ...prev,
-        preparation: "Preparation is required",
+        steps: "steps is required",
       }));
       isValid = false;
     } else {
-      setFormErrors((prev) => ({ ...prev, preparation: "" }));
+      setFormErrors((prev) => ({ ...prev, steps: "" }));
     }
     return isValid;
   };
@@ -53,7 +55,7 @@ const AddRecipeForm = () => {
     e.preventDefault();
     const isValid = validateForm();
     if (!isValid) {
-      setFormData({ title: "", ingredients: "", preparation: "" });
+      setFormData({ title: "", ingredients: "", steps: "" });
     } else {
       console.log(formData);
     }
@@ -77,10 +79,13 @@ const AddRecipeForm = () => {
           value={formData.title}
           className="border p-3"
         />
-        {formErrors.title && <p> formErrors.title</p>}
+        {formErrors.title && <p> {formErrors.title}</p>}
       </div>
       <div className="flex gap-4 p-4">
-        <label htmlFor="ingredients" className="font-semibold text-base min-w-[90px]">
+        <label
+          htmlFor="ingredients"
+          className="font-semibold text-base min-w-[90px]"
+        >
           Ingredients
         </label>
         <textarea
@@ -91,23 +96,28 @@ const AddRecipeForm = () => {
           value={formData.ingredients}
           className="border p-3"
         ></textarea>
-        {formErrors.ingredients && <p>formErrors.ingredients</p>}
+        {formErrors.ingredients && <p>{formErrors.ingredients}</p>}
       </div>
       <div className="flex gap-4 p-4">
-        <label htmlFor="preparation" className="font-semibold text-base min-w-[90px]">
-          Preparation
+        <label htmlFor="steps" className="font-semibold text-base min-w-[90px]">
+          steps
         </label>
         <textarea
-          name="preparation"
-          id="preparation"
+          name="steps"
+          id="steps"
           placeholder="How to prepare the recipe"
           onChange={handleChange}
-          value={formData.preparation}
+          value={formData.steps}
           className="border p-3"
         ></textarea>
-        {formErrors.preparation && <p>formErrors.preparation</p> }
+        {formErrors.steps && <p>{formErrors.steps}</p>}
       </div>
-      <button type="submit" className="bg-purple-500 rounded-full w-fit p-2 px-6 mx-auto hover:opacity-80">Submit</button>
+      <button
+        type="submit"
+        className="bg-purple-500 rounded-full w-fit p-2 px-6 mx-auto hover:opacity-80"
+      >
+        Submit
+      </button>
     </form>
   );
 };
