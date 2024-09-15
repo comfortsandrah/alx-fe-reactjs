@@ -64,7 +64,7 @@ const AddRecipeForm = () => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex flex-col  max-w-[450px] shadow p-6 text-left"
+      className="flex flex-col  sm:max-w-[450px] md:max-w-[550px] shadow p-6 text-left"
     >
       <div className="flex gap-4 p-4">
         <label htmlFor="title" className="font-semibold text-base min-w-[90px]">
