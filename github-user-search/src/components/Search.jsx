@@ -1,6 +1,38 @@
 import React, { useState } from "react";
 import { fetchUserData } from "../services/githubService";
 
+function getQueryFromURL(url) {
+  try {
+    const queryString = new URL(url).searchParams.get("q"); // Extracts the value of the 'q' parameter
+    return queryString || ""; // Return the extracted query or an empty string if not found
+  } catch (error) {
+    console.error("Invalid URL", error);
+    return "";
+  }
+}
+
+function parseLinkHeader(linkHeader) {
+  if (!linkHeader) return {};
+
+  console.log("Link Header: ", linkHeader); // Debugging: Check the link header response
+
+  const links = linkHeader.split(", ");
+  const parsedLinks = {};
+
+  links.forEach((link) => {
+    const match = link.match(/<([^>]+)>;\s*rel="([^"]+)"/);
+    if (match) {
+      const url = match[1];
+      const rel = match[2];
+      parsedLinks[rel] = url;
+    }
+  });
+
+  console.log("Parsed Links: ", parsedLinks); // Debugging: Check parsed links
+  return parsedLinks;
+}
+
+
 // Reusable InputField Component
 const InputField = ({
   label,
@@ -16,15 +48,17 @@ const InputField = ({
       <label htmlFor={name} className="md:min-w-44 text-left font-semibold">
         {label}
       </label>
-      <input
-        type={type}
-        name={name}
-        placeholder={placeholder}
-        value={value}
-        onChange={onChange}
-        className="border rounded p-2"
-      />
-      {error && <p className="text-red-500">{error}</p>}
+      <div className="flex flex-col gap-1">
+        <input
+          type={type}
+          name={name}
+          placeholder={placeholder}
+          value={value}
+          onChange={onChange}
+          className="border rounded p-2 "
+        />
+        {error && <p className="text-red-500">{error}</p>}
+      </div>
     </div>
   );
 };
@@ -35,15 +69,17 @@ const Search = () => {
     location: "",
     minimumRepositories: 0,
   });
-  const [fetchedData, setFetchedData] = useState(null);
+  const [fetchedData, setFetchedData] = useState({});
   const [loading, setLoading] = useState(false);
   const [fetchedDataError, setFetchedDataError] = useState();
+
+  const [pages, setPages] = useState({});
 
   const handleChange = (e) => {
     const name = e.target.name;
     const value =
       name === "minimumRepositories"
-        ? parseInt(e.target.value, 10)
+        ? parseInt(e.target.value)
         : e.target.value;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -86,23 +122,43 @@ const Search = () => {
     if (isValid) {
       setLoading(true);
       try {
-        const queryString = encodeURIComponent(`${formData.username} in:login`);
-        const res = await fetchUserData(queryString);
-        if (res.status === 200) {
-          setFetchedData(res.data);
-          console.log(res.data)
-        } else {
-          setFetchedDataError(res.errors);
-        }
-        setFormData({ username: "", location: "", minimumRepositories: 0 });
+        const queryString = encodeURIComponent(
+          `${formData.username} repos:>${formData.minimumRepositories} location:${formData.location}`
+        );
+        await fetchData(queryString);
       } catch (error) {
         setFetchedDataError(error);
-        setFormData({ username: "", location: "", minimumRepositories: 0 });
       } finally {
         setLoading(false);
       }
     }
   };
+
+  // Updated fetchData method
+const fetchData = async (queryString) => {
+  try {
+    const res = await fetchUserData(queryString); // Don't encode here since `queryString` should be directly passed from URL
+    if (res.status === 200) {
+      setFetchedData(res.data);
+      const pages = parseLinkHeader(res.headers.link);
+      setPages(pages);
+    } else {
+      setFetchedDataError(res.errors);
+    }
+  } catch (error) {
+    setFetchedDataError(error);
+  }
+};
+
+// Updated handlePageNavigation method
+const handlePageNavigation = async (pageUrl) => {
+  if (!pageUrl) return;
+  const queryString = getQueryFromURL(pageUrl); // Extract the 'q' parameter
+  setLoading(true);
+  await fetchData(queryString); // Fetch data without re-encoding the query
+  setLoading(false);
+};
+
 
   return (
     <>
@@ -127,7 +183,6 @@ const Search = () => {
           value={formData.location}
           error={errors.location}
           onChange={handleChange}
-          required
         />
 
         <InputField
@@ -142,28 +197,35 @@ const Search = () => {
 
         <button
           type="submit"
-          className="bg-red-500 p-3 px-6 w-fit mx-auto rounded-xl hover:bg-red-300 hover:outline hover:outline-red-700"
+          className="bg-red-500 p-3 mt-4 px-6 w-fit mx-auto rounded-xl hover:opacity-70 hover:outline hover:outline-red-600 "
         >
           Submit
         </button>
       </form>
 
-      {fetchedData.total_count>0 && (
-        <div className="flex flex-col mt-6 items-center shadow rounded w-[300px] p-4 mx-auto hover:scale-105">
-          <img
-            src={fetchedData.avatar_url}
-            alt={fetchedData.login}
-            className="w-24 h-24 rounded-xl mx-auto hover:scale-105 hover:shadow-xl my-4"
-          />
-          <p className="text-base font-semibold">{fetchedData.login}</p>
-          <a
-            href={fetchedData.html_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-500 hover:underline hover:underline-offset-2"
-          >
-            Link to my profile
-          </a>
+      {fetchedData?.total_count && (
+        <div className="flex flex-wrap">
+          {fetchedData?.items.map((item, index) => (
+            <div
+              className="flex flex-col mt-6 items-center shadow rounded w-[300px] p-4 mx-auto hover:scale-105"
+              key={index}
+            >
+              <img
+                src={item.avatar_url}
+                alt={item.login}
+                className="w-24 h-24 rounded-xl mx-auto hover:scale-105 hover:shadow-xl my-4"
+              />
+              <p className="text-base font-semibold">{item.login}</p>
+              <a
+                href={item.html_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-500 hover:underline hover:underline-offset-2"
+              >
+                Link to my profile
+              </a>
+            </div>
+          ))}
         </div>
       )}
 
@@ -171,6 +233,42 @@ const Search = () => {
       {fetchedDataError && (
         <p className="text-red-500 mt-3">Looks like we can't find the user</p>
       )}
+
+      {/* Pagination Buttons */}
+      <div className="flex justify-center mt-4 gap-4">
+        {pages.first && (
+          <button
+            onClick={() => handlePageNavigation(pages.first)}
+            className="bg-gray-300 p-2 rounded hover:bg-gray-400"
+          >
+            First
+          </button>
+        )}
+        {pages.prev && (
+          <button
+            onClick={() => handlePageNavigation(pages.prev)}
+            className="bg-gray-300 p-2 rounded hover:bg-gray-400"
+          >
+            Previous
+          </button>
+        )}
+        {pages.next && (
+          <button
+            onClick={() => handlePageNavigation(pages.next)}
+            className="bg-gray-300 p-2 rounded hover:bg-gray-400"
+          >
+            Next
+          </button>
+        )}
+        {pages.last && (
+          <button
+            onClick={() => handlePageNavigation(pages.last)}
+            className="bg-gray-300 p-2 rounded hover:bg-gray-400"
+          >
+            Last
+          </button>
+        )}
+      </div>
     </>
   );
 };
