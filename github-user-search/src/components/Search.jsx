@@ -14,8 +14,6 @@ function getQueryFromURL(url) {
 function parseLinkHeader(linkHeader) {
   if (!linkHeader) return {};
 
-  console.log("Link Header: ", linkHeader); // Debugging: Check the link header response
-
   const links = linkHeader.split(", ");
   const parsedLinks = {};
 
@@ -28,10 +26,8 @@ function parseLinkHeader(linkHeader) {
     }
   });
 
-  console.log("Parsed Links: ", parsedLinks); // Debugging: Check parsed links
   return parsedLinks;
 }
-
 
 // Reusable InputField Component
 const InputField = ({
@@ -135,30 +131,29 @@ const Search = () => {
   };
 
   // Updated fetchData method
-const fetchData = async (queryString) => {
-  try {
-    const res = await fetchUserData(queryString); // Don't encode here since `queryString` should be directly passed from URL
-    if (res.status === 200) {
-      setFetchedData(res.data);
-      const pages = parseLinkHeader(res.headers.link);
-      setPages(pages);
-    } else {
-      setFetchedDataError(res.errors);
+  const fetchData = async (queryString) => {
+    try {
+      const res = await fetchUserData(queryString); // Don't encode here since `queryString` should be directly passed from URL
+      if (res.status === 200) {
+        setFetchedData(res.data);
+        const pages = parseLinkHeader(res.headers.link);
+        setPages(pages);
+      } else {
+        setFetchedDataError(res.errors);
+      }
+    } catch (error) {
+      setFetchedDataError(error);
     }
-  } catch (error) {
-    setFetchedDataError(error);
-  }
-};
+  };
 
-// Updated handlePageNavigation method
-const handlePageNavigation = async (pageUrl) => {
-  if (!pageUrl) return;
-  const queryString = getQueryFromURL(pageUrl); // Extract the 'q' parameter
-  setLoading(true);
-  await fetchData(queryString); // Fetch data without re-encoding the query
-  setLoading(false);
-};
-
+  // Updated handlePageNavigation method
+  const handlePageNavigation = async (pageUrl) => {
+    if (!pageUrl) return;
+    const queryString = getQueryFromURL(pageUrl); // Extract the 'q' parameter
+    setLoading(true);
+    await fetchData(queryString); // Fetch data without re-encoding the query
+    setLoading(false);
+  };
 
   return (
     <>
