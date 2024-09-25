@@ -1,6 +1,8 @@
 import axios from "axios";
 
-export function fetchUserData(username) {
-    return axios.get(`https://api.github.com/users/${username}`)
+export function fetchUserData(query) {
+    console.log(query)
+    return axios.get(`https://api.github.com/search/users?q=${query}`)
+
 }
 
