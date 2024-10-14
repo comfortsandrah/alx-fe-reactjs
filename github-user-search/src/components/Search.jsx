@@ -133,7 +133,7 @@ const Search = () => {
   // Updated fetchData method
   const fetchData = async (queryString) => {
     try {
-      const res = await fetchUserData(queryString); // Don't encode here since `queryString` should be directly passed from URL
+      const res = await fetchUserData(queryString);L
       if (res.status === 200) {
         setFetchedData(res.data);
         const pages = parseLinkHeader(res.headers.link);
